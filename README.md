@@ -1,8 +1,9 @@
-# manhwaPageEndpoints
 # Important Info
 
-Image files going to backend are Blobs
-Image files going to frontend are base64
+Files going to backend are Blobs
+
+Files going to frontend are base64
+
 # Controllers
 
 ## UserController:
@@ -147,7 +148,7 @@ Input
 }
 ```
 
-code for generating formData in profile-pic-change (Express), use same key naming as example:
+code for generating formData in profile-pic-change, use same key naming as example:
 ```
 const formData = new FormData();
 formData.append('profilePicture', profilePictureFile); 
@@ -187,6 +188,39 @@ Output
 }
 ```
 
+### api/user/profile/{username}
+
+Input
+```
+{
+	"method": "GET",
+	"url": "baseUrl/api/user/profile/{username}",
+	"headers": {
+		"Authorization": string,
+		"Content-Type": "application/json"
+	}
+}
+```
+
+Output
+```
+	"message": "get profile info succesful"
+	"profile": {
+		"avatar": string,
+		"username": string,
+		"description": string,
+		"country": string,
+		"rated": [
+			{
+			"comicReference": string, 
+			"comicName": string, 
+			"comicCover": string,
+			"userRate": number,
+			"averageRate": number 
+			}
+		]   
+	} 
+```
 ## ComicController:
 
 ### api/comic/all GET
@@ -206,12 +240,12 @@ Input
 ```
 
 url varibles
-- title
-- author
-- genre
-- type (manhwa, manga, comic)
-- secureMode (taken from user options)
-- items (requested items number per page)
+- **title**: string
+- **author**: string
+- **genre**: string
+- **type**: string (manhwa, manga, comic...)
+- **secureMode**: boolean (if true, excludes nsfw content, taken from user options)
+- **items**: number (requested items per page)
 
 urlExample: baseUrl/api/comic/all?author=someone&genre=action&items=20
 
@@ -303,7 +337,7 @@ Output
 ```
 ### api/comic/new POST
 
-Add new comics, users and admins !TODO
+Add new comics, users and admins
 
 ```
 {
@@ -571,4 +605,3 @@ Output
 	"message": "succesful"
 }
 ```
-
