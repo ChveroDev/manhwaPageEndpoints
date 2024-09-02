@@ -47,7 +47,7 @@ Input
 	},
 
 	"body": {
-		"username": string,
+            "username": string,
 	    "password": string
 	}
 }
@@ -56,7 +56,7 @@ Input
 Output
 ```
 {
-    token: string
+    "token": string
 }
 ```
 
@@ -121,7 +121,7 @@ Input
 Output
 ```
 {
-    token: string
+    "token": string
 }
 ```
 
@@ -140,7 +140,7 @@ Input
 	},
 	
 	"body":{
-		"blob": Object
+		"image": string
 	}
 }
 ```
@@ -176,7 +176,7 @@ Input
 Output
 ```
 {
-	message: "profile update succesful"
+	"message": "profile update succesful"
 }
 ```
 
@@ -213,12 +213,15 @@ Output
 	"comics": [{
 		"reference": string,
 		"name": string,
-		"cover": Blob
+		"cover": string
+		"type": string,
+		"totalChapters": number,
+		"genres": [string]
 	}],
 	"pagination": {
-		"comicsPerPage": number,
-		"totalComics": number
-		"totalPages": number
+		"totalRegisters": number,
+		"totalPages": number,
+		"actualPage": number
 	}
 }
 ```
@@ -244,12 +247,15 @@ Output
 	"comics": [{
 		"reference": string,
 		"name": string,
-		"cover": Blob
+		"cover": string,
+		"type": string,
+		"totalChapters": number,
+		"genres": [string]
 	}],
 	"pagination": {
-		"comicsPerPage": number,
-		"totalComics": number
-		"totalPages": number
+		"totalRegisters": number,
+		"totalPages": number,
+		"actualPage": number
 	}
 }
 ```
@@ -275,12 +281,15 @@ Output
 	"comics": [{
 		"reference": string,
 		"name": string,
-		"cover": Blob
+		"cover": string,
+		"type": string,
+		"totalChapters": number,
+		"genres": [string]
 	}],
 	"pagination": {
-		"comicsPerPage": number,
-		"totalComics": number
-		"totalPages": number
+		"totalRegisters": number,
+		"totalPages": number,
+		"actualPage": number
 	}
 }
 ```
@@ -310,7 +319,7 @@ Add new comics, users and admins !TODO
 		"chapter":{
 			"index": 1
 			"name": string,
-			"images":[{"image": Object, "index": number}]
+			"images":[{"image": string, "index": number}]
 		}
 	}
 }
@@ -466,7 +475,7 @@ Output
 	"chapter":{
 		"index": number
 		"name": string
-		"images": [{"image": Blob, "index": number}]
+		"images": [{"image": string, "index": number}]
 	}
 	"comments":[
 		{
@@ -487,14 +496,10 @@ Output
 	"url": "baseUrl/api/chapter/new",
 	"headers": {
 		"Authorization": string,
-		"Content-Type": "application/json"
+		"Content-Type": "multipart/form-data"
 	},
 
-	"body": {
-		"name": string,
-		"releaseDate": Date,
-		"images": [Object]
-	}
+	"body": Object
 }
 ```
 
