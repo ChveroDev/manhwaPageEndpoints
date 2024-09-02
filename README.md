@@ -5,7 +5,7 @@
 
 ### api/user/new POST
 
-creates a new user if username or email non exist, returns session jwt
+creates a new user if username and email non exist, returns session jwt
 
 Input:
 ```
@@ -110,7 +110,7 @@ Input
 ```
 {
 	"method": "GET",
-	"url": "baseUrl/api/user/refreshToken",
+	"url": "baseUrl/api/user/refresh-token",
 	"headers": {
 		"Authorization": string,
 		"Content-Type": "application/json"
@@ -190,7 +190,7 @@ Input
 ```
 {
 	"method": "GET",
-	"url": "baseUrl/api/comic/all?title=...author=...&genre=...&type=...",
+	"url": "baseUrl/api/comic/all?title=...author=...&secureMode=true/false",
 	"headers": {
 		"Authorization": string,
 		"Content-Type": "application/json"
@@ -203,6 +203,7 @@ url varibles
 - author
 - genre
 - type (manhwa, manga, comic)
+- secureMode (taken from user options)
 
 urlExample: baseUrl/api/comic/all?author=someone&genre=action&...
 
@@ -210,6 +211,7 @@ Output
 ```
 {
 	"comics": [{
+		"reference": string,
 		"name": string,
 		"cover": Blob
 	}],
@@ -228,7 +230,7 @@ Input
 ```
 {
 	"method": "GET",
-	"url": "baseUrl/api/comic/trends",
+	"url": "baseUrl/api/comic/trends?secureMode=true/false",
 	"headers": {
 		"Authorization": string,
 		"Content-Type": "application/json"
@@ -240,6 +242,7 @@ Output
 ```
 {
 	"comics": [{
+		"reference": string,
 		"name": string,
 		"cover": Blob
 	}],
@@ -258,7 +261,7 @@ Input
 ```
 {
 	"method": "GET",
-	"url": "baseUrl/api/comic/top",
+	"url": "baseUrl/api/comic/top?secureMode=true/false",
 	"headers": {
 		"Authorization": string,
 		"Content-Type": "application/json"
@@ -270,6 +273,7 @@ Output
 ```
 {
 	"comics": [{
+		"reference": string,
 		"name": string,
 		"cover": Blob
 	}],
@@ -298,10 +302,16 @@ Add new comics, users and admins !TODO
 		"name": string,
 		"author": string,
 		"releaseDate": Date,
-		"genreId": string,
+		"genres": [string]
 		"typeId": string,
 		"Synopsis": string,
 		"pegi": number,
+		"nsfw": boolean,
+		"chapter":{
+			"index": 1
+			"name": string,
+			"images":[{"image": Object, "index": number}]
+		}
 	}
 }
 ```
@@ -313,7 +323,7 @@ Output
 }
 ```
 
-### api/comic/{id} GET
+### api/comic/{reference} GET
 
 get specific comic by id
 
@@ -321,7 +331,7 @@ Input
 ```
 {
 	"method": "GET",
-	"url": "baseUrl/api/comic/{id}",
+	"url": "baseUrl/api/comic/{reference}",
 	"headers": {
 		"Authorization": string,
 		"Content-Type": "application/json"
@@ -333,11 +343,14 @@ Output
 ```
 {
 	"comic": {
+		"reference": string,
 		"name": string,
 		"author": string,
 		"synopsis": string,
 		"rate": number,
-		"totalChapters": number
+		"totalChapters": number,
+		"timesVisitedThisWeek": number,
+		"pegi": number,
 	}
 	"chapters": [
 		{
@@ -347,7 +360,7 @@ Output
 	]
 }
 ```
-### api/comic/{id} DELETE
+### api/comic/{reference} DELETE
 
 deletes specified comic
 
@@ -355,7 +368,7 @@ Input
 ```
 {
 	"method": "DELETE",
-	"url": "baseUrl/api/comic/{id}",
+	"url": "baseUrl/api/comic/{reference}",
 	"headers": {
 		"Authorization": string,
 		"Content-Type": "application/json"
@@ -369,7 +382,7 @@ Output
 	"message": "delete succesful"
 }
 ```
-### api/comic/{id} PUT
+### api/comic/{reference} PUT
 
 Comic's owner and admins can modify comic info
 
@@ -377,7 +390,7 @@ Input
 ```
 {
 	"method": "PUT",
-	"url": "baseUrl/api/comic/{id}",
+	"url": "baseUrl/api/comic/{reference}",
 	"headers": {
 		"Authorization": string,
 		"Content-Type": "application/json"
@@ -400,7 +413,7 @@ Output
 }
 ```
 
-### api/comic/rate/{id} PUT
+### api/comic/rate/{reference} PUT
 
 rate a comic, from 0 to 10, one decimal. example: 9.0, 1.8 etc etc
 
@@ -408,7 +421,7 @@ Input
 ```
 {
 	"method": "PUT",
-	"url": "baseUrl/api/comic/rate/{id}",
+	"url": "baseUrl/api/comic/rate/{reference}",
 	"headers": {
 		"Authorization": string,
 		"Content-Type": "application/json"
