@@ -1,4 +1,8 @@
 # manhwaPageEndpoints
+# Important Info
+
+Image files going to backend are Blobs
+Image files going to frontend are base64
 # Controllers
 
 ## UserController:
@@ -136,13 +140,17 @@ Input
 	"url": "baseUrl/api/user/profile-pic-change",
 	"headers": {
 		"Authorization": string,
-		"Content-Type": "application/json"
+		"Content-Type": "multipart/form-data"
 	},
 	
-	"body":{
-		"image": string
-	}
+	"body": formData
 }
+```
+
+code for generating formData in profile-pic-change (Express), use same key naming as example:
+```
+const formData = new FormData();
+formData.append('profilePicture', profilePictureFile); 
 ```
 
 Output
@@ -151,7 +159,6 @@ Output
 	"message": "new profile pic updated"
 }
 ```
-
 ### api/user/profile-change PUT
 
 Change or add their porfile's info
@@ -204,8 +211,9 @@ url varibles
 - genre
 - type (manhwa, manga, comic)
 - secureMode (taken from user options)
+- items (requested items number per page)
 
-urlExample: baseUrl/api/comic/all?author=someone&genre=action&...
+urlExample: baseUrl/api/comic/all?author=someone&genre=action&items=20
 
 Output
 ```
@@ -219,7 +227,7 @@ Output
 		"genres": [string]
 	}],
 	"pagination": {
-		"totalRegisters": number,
+		"totalItems": number,
 		"totalPages": number,
 		"actualPage": number
 	}
@@ -253,7 +261,7 @@ Output
 		"genres": [string]
 	}],
 	"pagination": {
-		"totalRegisters": number,
+		"totalItems": number,
 		"totalPages": number,
 		"actualPage": number
 	}
@@ -287,13 +295,12 @@ Output
 		"genres": [string]
 	}],
 	"pagination": {
-		"totalRegisters": number,
+		"totalItems": number,
 		"totalPages": number,
 		"actualPage": number
 	}
 }
 ```
-
 ### api/comic/new POST
 
 Add new comics, users and admins !TODO
@@ -304,25 +311,31 @@ Add new comics, users and admins !TODO
 	"url": "baseUrl/api/comic/new",
 	"headers": {
 		"Authorization": string,
-		"Content-Type": "application/json"
+		"Content-Type": "multipart/form-data"
 	},
 
-	"body": {
-		"name": string,
-		"author": string,
-		"releaseDate": Date,
-		"genres": [string]
-		"typeId": string,
-		"Synopsis": string,
-		"pegi": number,
-		"nsfw": boolean,
-		"chapter":{
-			"index": 1
-			"name": string,
-			"images":[{"image": string, "index": number}]
-		}
-	}
+	"body": formData
 }
+```
+
+code structure for formData, use the same key naming as example:
+```
+const formData = new FormData();
+formData.append('comicCover', comicCoverFile);
+for (let i = 0; i < chapterFiles.length; i++) { 
+	formData.append('chapters', chapterFiles[i]);
+}
+formData.append('data', {
+	"name": string,
+	"author": string,
+	"releaseDate": Date,
+	"genres": [string]
+	"typeId": string,
+	"Synopsis": string,
+	"pegi": number,
+	"nsfw": boolean,
+	"firstChapterName": string
+})
 ```
 
 Output
@@ -331,7 +344,6 @@ Output
 	"message": "comic post succesful"
 }
 ```
-
 ### api/comic/{reference} GET
 
 get specific comic by id
@@ -499,10 +511,20 @@ Output
 		"Content-Type": "multipart/form-data"
 	},
 
-	"body": Object
+	"body": formData
 }
 ```
 
+Code structure to build formData, use same key naming as example:
+```
+const formData = new FormData();
+for (let i = 0; i < chapterFiles.length; i++) { 
+	formData.append('chapters', chapterFiles[i]);
+}
+formData.append('data', {
+	"chapterName": string
+})
+```
 ## CommentController
 ### api/comment/new POST
 
@@ -549,3 +571,4 @@ Output
 	"message": "succesful"
 }
 ```
+
