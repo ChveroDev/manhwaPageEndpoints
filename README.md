@@ -142,14 +142,10 @@ Input
 		"Content-Type": "multipart/form-data"
 	},
 	
-	"body": formData
+	"body":  {
+		"profilePic": number
+	}
 }
-```
-
-code for generating formData in profile-pic-change, use same key naming as example:
-```
-const formData = new FormData();
-formData.append('profilePicture', profilePictureFile); 
 ```
 
 Output
@@ -158,6 +154,7 @@ Output
 	"message": "new profile pic updated"
 }
 ```
+
 ### api/user/profile-change PUT
 
 Change or add their porfile's info
@@ -188,6 +185,8 @@ Output
 
 ### api/user/profile/{username}
 
+returns profile info, rated has the 5 most rated user´s readed comics and creations has the 5 most recent user´s comics.
+
 Input
 ```
 {
@@ -212,16 +211,32 @@ Output
 			{
 			"comicReference": string, 
 			"name": string, 
-			"covver": string,
+			"cover": string,
 			"userRate": number,
 			"rate": number,
 			"type": string,
 			"totalChapters": number,
 			"genres": [string]
 			}
-		]   
+		],
+		"creations": [
+			{
+			"comicReference": string, 
+			"name": string, 
+			"cover": string,
+			"userRate": number,
+			"rate": number,
+			"type": string,
+			"totalChapters": number,
+			"genres": [string]
+			}
+		]    
 	} 
 ```
+
+### api/user/profile/rated/{username}/{page} GET
+
+### api/user/profile/creations/{username}/{page} GET
 ## ComicController:
 
 ### api/comic/all GET
@@ -258,6 +273,8 @@ Output
 		"name": string,
 		"cover": string,
 		"type": string,
+		"authors": [{"reference": string, "name": string}],
+		"artists": [{"reference": string, "name": string}]
 		"totalChapters": number,
 		"genres": [string],
 		"rate": number,
@@ -293,6 +310,8 @@ Output
 		"reference": string,
 		"name": string,
 		"cover": string,
+		"authors": [{"reference": string, "name": string}],
+		"artists": [{"reference": string, "name": string}]
 		"type": string,
 		"totalChapters": number,
 		"genres": [string],
@@ -333,6 +352,8 @@ Output
 		"reference": string,
 		"name": string,
 		"cover": string,
+		"authors": [{"reference": string, "name": string}],
+		"artists": [{"reference": string, "name": string}]
 		"type": string,
 		"totalChapters": number,
 		"genres": [string],
@@ -381,7 +402,6 @@ formData.append('data': {
 	"genres": [string],
 	"typeId": string,
 	"Synopsis": string,
-	"pegi": number,
 	"nsfw": boolean,
 	"chapter":{
 		"chapterName": string,
@@ -418,12 +438,13 @@ Output
 	"comic": {
 		"reference": string,
 		"name": string,
-		"author": string,
+		"authors": [{"reference": string, "name": string}],
+		"artists": [{"reference": string, "name": string}]
 		"synopsis": string,
 		"rate": number,
 		"totalChapters": number,
 		"timesVisitedThisWeek": number,
-		"pegi": number,
+		"communityComic": boolean
 	}
 	"chapters": [
 		{
@@ -473,7 +494,6 @@ Input
 		"genreId": string,
 		"typeId": string,
 		"Synopsis": string,
-		"pegi": number,
 		"rate": number
 	}
 }
@@ -592,6 +612,7 @@ Output
 Code structure to build formData, use same key naming as example:
 ```
 const formData = new FormData();
+formData.append('chapterCover', chpterCoverFile);
 for (let i = 0; i < chapterFiles.length; i++) { 
 	formData.append('chapters', chapterFiles[i]);
 }
