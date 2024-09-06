@@ -1,9 +1,7 @@
 # Important Info
 
 Files going to backend are Blobs
-
 Files going to frontend are base64
-
 # Controllers
 
 ## UserController:
@@ -89,7 +87,7 @@ Output
 }
 ```
 
-### api/user/password-change POST
+### api/user/password-change PUT
 
 ```
 {
@@ -102,7 +100,7 @@ Output
 
 	"body": {
 		"username": string,
-		"password": string
+		"newPassword": string
 	}
 }
 ```
@@ -213,10 +211,13 @@ Output
 		"rated": [
 			{
 			"comicReference": string, 
-			"comicName": string, 
-			"comicCover": string,
+			"name": string, 
+			"covver": string,
 			"userRate": number,
-			"averageRate": number 
+			"rate": number,
+			"type": string,
+			"totalChapters": number,
+			"genres": [string]
 			}
 		]   
 	} 
@@ -231,7 +232,7 @@ Input
 ```
 {
 	"method": "GET",
-	"url": "baseUrl/api/comic/all?title=...author=...&secureMode=true/false",
+	"url": "baseUrl/api/comic/all?title=...author=...&secureMode=boolean",
 	"headers": {
 		"Authorization": string,
 		"Content-Type": "application/json"
@@ -247,7 +248,7 @@ url varibles
 - **secureMode**: boolean (if true, excludes nsfw content, taken from user options)
 - **items**: number (requested items per page)
 
-urlExample: baseUrl/api/comic/all?author=someone&genre=action&items=20
+urlExample: baseUrl/api/comic/all?author=someone&genre=action
 
 Output
 ```
@@ -255,10 +256,12 @@ Output
 	"comics": [{
 		"reference": string,
 		"name": string,
-		"cover": string
+		"cover": string,
 		"type": string,
 		"totalChapters": number,
-		"genres": [string]
+		"genres": [string],
+		"rate": number,
+		"checked": boolean
 	}],
 	"pagination": {
 		"totalItems": number,
@@ -275,7 +278,7 @@ Input
 ```
 {
 	"method": "GET",
-	"url": "baseUrl/api/comic/trends?secureMode=true/false",
+	"url": "baseUrl/api/comic/trends?secureMode=boolean&items=number",
 	"headers": {
 		"Authorization": string,
 		"Content-Type": "application/json"
@@ -292,7 +295,9 @@ Output
 		"cover": string,
 		"type": string,
 		"totalChapters": number,
-		"genres": [string]
+		"genres": [string],
+		"rate": number,
+		"checked": boolean
 	}],
 	"pagination": {
 		"totalItems": number,
@@ -301,6 +306,10 @@ Output
 	}
 }
 ```
+
+Url variables
+- secureMode
+- items
 ### api/comic/top GET
 
 returns top comics
@@ -309,7 +318,7 @@ Input
 ```
 {
 	"method": "GET",
-	"url": "baseUrl/api/comic/top?secureMode=true/false",
+	"url": "baseUrl/api/comic/top?secureMode=boolean&items=number",
 	"headers": {
 		"Authorization": string,
 		"Content-Type": "application/json"
@@ -326,7 +335,9 @@ Output
 		"cover": string,
 		"type": string,
 		"totalChapters": number,
-		"genres": [string]
+		"genres": [string],
+		"rate": number,
+		"checked": boolean
 	}],
 	"pagination": {
 		"totalItems": number,
@@ -335,6 +346,10 @@ Output
 	}
 }
 ```
+
+Url variables
+- secureMode
+- items
 ### api/comic/new POST
 
 Add new comics, users and admins
@@ -357,18 +372,21 @@ code structure for formData, use the same key naming as example:
 const formData = new FormData();
 formData.append('comicCover', comicCoverFile);
 for (let i = 0; i < chapterFiles.length; i++) { 
-	formData.append('chapters', chapterFiles[i]);
+	formData.append('chapterImages', chapterFiles[i]);
 }
-formData.append('data', {
+formData.append('data': {
 	"name": string,
 	"author": string,
 	"releaseDate": Date,
-	"genres": [string]
+	"genres": [string],
 	"typeId": string,
 	"Synopsis": string,
 	"pegi": number,
 	"nsfw": boolean,
-	"firstChapterName": string
+	"chapter":{
+		"chapterName": string,
+		"chapterReleaseDate": Date
+	}
 })
 ```
 
@@ -390,7 +408,7 @@ Input
 	"headers": {
 		"Authorization": string,
 		"Content-Type": "application/json"
-	},
+	}
 }
 ```
 
@@ -427,7 +445,7 @@ Input
 	"headers": {
 		"Authorization": string,
 		"Content-Type": "application/json"
-	},
+	}
 }
 ```
 
@@ -468,6 +486,28 @@ Output
 }
 ```
 
+### api/comic/exists
+
+returns true if comic is already in the database
+
+Input
+```
+{
+	"method": "GET",
+	"url": "baseUrl/api/comic/exists?name=string&author=string",
+	"headers": {
+		"Authorization": string,
+		"Content-Type": "application/json"
+	}
+}
+```
+
+Output
+```
+{
+	"exists": boolean 
+}
+```
 ### api/comic/rate/{reference} PUT
 
 rate a comic, from 0 to 10, one decimal. example: 9.0, 1.8 etc etc
@@ -586,7 +626,7 @@ Input
 ```
 {
 	"method": "PUT",
-	"url": "baseUrl/api/chapter/comment/like",
+	"url": "baseUrl/api/comment/like",
 	"headers": {
 		"Authorization": string,
 		"Content-Type": "application/json"
@@ -603,5 +643,30 @@ Output
 ```
 {
 	"message": "succesful"
+}
+```
+
+## GenreController:
+
+### api/genre/all
+
+returns all genres
+
+Input
+```
+{
+	"method": "GET",
+	"url": "baseUrl/api/genre/all",
+	"headers": {
+		"Authorization": string,
+		"Content-Type": "application/json"
+	}
+}
+```
+
+Output
+```
+{
+	"genres": [string]
 }
 ```
